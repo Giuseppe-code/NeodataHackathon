@@ -1,0 +1,30 @@
+import sqlite3
+
+conn = sqlite3.connect('mydatabase.db')
+
+cursor = conn.cursor()
+
+cursor.execute('''
+    CREATE TABLE Patient (
+        codice_fiscale TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        surname TEXT NOT NULL,
+        birthday TEXT NOT NULL,
+        residence TEXT NOT NULL,
+        city_of_bith TEXT NOT NULL
+    );
+     CREATE TABLE Patient_card (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        codice_fiscale TEXT NOT NULL,
+        FOREIGN KEY (codice_fiscale) REFERENCES Patient(codice_fiscale),
+        day_of_registration TEXT NOT NULL,
+        symptoms TEXT NOT NULL,
+        severity TEXT NOT NULL
+     );
+''')
+
+
+conn.commit()
+
+
+conn.close()
