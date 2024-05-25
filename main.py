@@ -1,3 +1,4 @@
+import json
 # chatbot.py
 # Import necessary modules
 from langchain_core.prompts import ChatPromptTemplate
@@ -7,6 +8,7 @@ import sqlite3
 from query import creare_connessione_database, verifica_codice_fiscale, recupera_dati_paziente, inserisci_nuovo_paziente
 from pylatex import Document, Section, Subsection, Command
 from pylatex.utils import NoEscape
+from langchain.chains import LLMChain  # Import the LLMChain class
 
 # Define a prompt template for the chatbot
 prompt = ChatPromptTemplate.from_messages(
@@ -19,7 +21,7 @@ prompt = ChatPromptTemplate.from_messages(
 # Define a prompt template for extracting patient details
 detail_prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", "Extract the following details from the text: Name, Surname, Date of Birth, Gender, Location, Vital Signs, Symptoms. Provide the details in a structured format."),
+        ("system", "Extract the following details from the text: Name, Surname, Date of Birth, Gender, Location, Vital Signs, Symptoms. Provide the details in json. dont tell other things other than the json file"),
         ("user", "Patient condition details: {question}")
     ]
 )
@@ -46,8 +48,36 @@ detail_chain = detail_prompt | llm
 if input_text:
     # Categorize the severity
     response = categorize_chain.invoke({"question": input_text})
+
     severity = response.split()[0]
     st.write(f"The patient's condition is categorized as: {severity}")
     
+# Function to get patient details from the model response
+def get_patient_details(question):
+    # Create the LangChain chain
 
+    chain = LLMChain(llm=llm, prompt=detail_prompt)
     
+    # Get the response from the model
+    response = chain.run({"question": question})
+    
+    # Convert the response to a dictionary
+    response_dict = json.loads(response)
+    
+    # Extract the parameters
+    name = response_dict.get("Name", "non specificato")
+    surname = response_dict.get("Surname", "non specificato")
+    date_of_birth = response_dict.get("Date of Birth", "non specificato")
+    gender = response_dict.get("Gender", "non specificato")
+    location = response_dict.get("Location", "non specificato")
+    vital_signs = response_dict.get("Vital Signs", "non specificato")
+    symptoms = response_dict.get("Symptoms", "non specificato")
+    
+    return name, surname, date_of_birth, gender, location, vital_signs, symptoms
+
+# Example usage
+patient_question = "Patient condition details: John Doe, born on 01/01/1980, male, located in Room 101, has a fever of 39°C and complains of chest pain."
+name, surname, date_of_birth, gender, location, vital_signs, symptoms = get_patient_details(input_text)
+name, surname, date_of_birth, gender, location, vital_signs, symptoms = get_patient_details(input_text)
+
+print(f"Name: {name}, Surname: {surname}, Date of Birth: {date_of_birth}, Gender: {gender}, Location: {location}, Vital Signs: {vital_signs}, Symptoms: {symptoms}")
