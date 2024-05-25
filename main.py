@@ -14,7 +14,7 @@ from langchain.chains import LLMChain  # Import the LLMChain class
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system",
-         "You are a helpful assistant. Based on the patient's condition described, respond with either ,'white','qreen', 'yellow', or 'red' to categorize the severity of their condition, you have also to consider the past of the patient reading his history before categorizing "),
+         "You are a helpful assistant. Based on the patient's condition described, respond only with  ,'white','qreen', 'yellow', or 'red' to categorize the severity of their condition, you have also to consider the past of the patient reading his history before categorizing "),
         ("user", "Patient condition details: {question}")
     ]
 )
