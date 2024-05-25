@@ -9,6 +9,29 @@ from query import creare_connessione_database, verifica_codice_fiscale, recupera
 from pylatex import Document, Section, Subsection, Command
 from pylatex.utils import NoEscape
 from langchain.chains import LLMChain  # Import the LLMChain class
+#  Importazioni necessarie per la RAG
+from langchain_community.retrievers import WikipediaRetriever
+retriever = WikipediaRetriever()
+docs = retriever.invoke("codice fiscale")
+print(docs)
+# Aggiunta delle conoscenze di triage:
+from langchain_community.document_loaders import WebBaseLoader
+
+loader = WebBaseLoader("https://docs.smith.langchain.com/overview")
+data = loader.load()
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=0)
+all_splits = text_splitter.split_documents(data)
+# creazione degli embeddings
+from langchain_chroma import Chroma
+#from langchain_openai import OpenAIEmbeddings
+
+#vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbeddings())
+
+
+
+
 
 # Define a prompt template for the chatbot
 prompt = ChatPromptTemplate.from_messages(
@@ -49,7 +72,7 @@ if input_text:
     response = categorize_chain.invoke({"question": input_text})
 
     severity = response.split()[0]
-    st.write(f"The patient's condition is categorized as: {severity}")
+    st.write(f"il sistema IGEA classifica il paziente con il codice: {severity}")
 
 
 # Function to get patient details from the model response
