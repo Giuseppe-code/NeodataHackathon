@@ -15,6 +15,12 @@ def recupera_dati_paziente(conn, codice_fiscale):
     cursor = conn.cursor()
     cursor.execute(query, (codice_fiscale,))
     return cursor.fetchone()
+def retrieve_patient_history(conn, codice_fiscale):
+
+    query = "SELECT day_of_registration, symptoms, severity FROM Patient_card WHERE codice_fiscale = ?"
+    cursor = conn.cursor()
+    cursor.execute(query, (codice_fiscale,))
+    return cursor.fetchall()
 
 def inserisci_nuovo_paziente(conn, nuovo_paziente):
     query = """
