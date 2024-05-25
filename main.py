@@ -14,7 +14,7 @@ from langchain.chains import LLMChain  # Import the LLMChain class
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system",
-         "You are a helpful assistant. Based on the patient's condition described, respond with either 'verde', 'giallo', or 'rosso' to categorize the severity of their condition."),
+         "You are a helpful assistant. Based on the patient's condition described, respond with either ,'white','qreen', 'yellow', or 'red' to categorize the severity of their condition, you have also to consider the past of the patient reading his history before categorizing "),
         ("user", "Patient condition details: {question}")
     ]
 )
@@ -23,7 +23,7 @@ prompt = ChatPromptTemplate.from_messages(
 detail_prompt = ChatPromptTemplate.from_messages(
     [
         ("system",
-         "Extract the following details from the text: Name, Surname, Date of Birth, Gender, Location, Vital Signs, Symptoms. Provide the details in json. dont tell other things other than the json file"),
+         "Extract the following details from the text: Codice_fiscale, Name, Surname, Date of Birth, Gender, Location, Vital Signs, Symptoms. Provide the details in json. dont tell other things other than the json file"),
         ("user", "Patient condition details: {question}")
     ]
 )
@@ -66,6 +66,7 @@ def get_patient_details(question):
 
     # Extract the parameters
     name = response_dict.get("Name", "non specificato")
+    codice_fiscale = response_dict.get("Codice fiscale","Non specificato")
     surname = response_dict.get("Surname", "non specificato")
     date_of_birth = response_dict.get("Date of Birth", "non specificato")
     gender = response_dict.get("Gender", "non specificato")
@@ -73,13 +74,11 @@ def get_patient_details(question):
     vital_signs = response_dict.get("Vital Signs", "non specificato")
     symptoms = response_dict.get("Symptoms", "non specificato")
 
-    return name, surname, date_of_birth, gender, location, vital_signs, symptoms
+    return name, surname, date_of_birth, gender, location, vital_signs, symptoms, codice_fiscale
 
 
 # Example usage
-patient_question = "Patient condition details: John Doe, born on 01/01/1980, male, located in Room 101, has a fever of 39°C and complains of chest pain."
-name, surname, date_of_birth, gender, location, vital_signs, symptoms = get_patient_details(input_text)
-name, surname, date_of_birth, gender, location, vital_signs, symptoms = get_patient_details(input_text)
+name, surname, date_of_birth, gender, location, vital_signs, symptoms, codice_fiscale = get_patient_details(input_text)
 
 print(
-    f"Name: {name}, Surname: {surname}, Date of Birth: {date_of_birth}, Gender: {gender}, Location: {location}, Vital Signs: {vital_signs}, Symptoms: {symptoms}")
+    f"Name: {name}, Surname: {surname},Codice fiscale: {codice_fiscale}, Date of Birth: {date_of_birth}, Gender: {gender}, Location: {location}, Vital Signs: {vital_signs}, Symptoms: {symptoms}")
