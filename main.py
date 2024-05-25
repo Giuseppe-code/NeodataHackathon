@@ -5,7 +5,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.llms import Ollama
 import streamlit as st
 import sqlite3
-from query import creare_connessione_database, verifica_codice_fiscale, recupera_dati_paziente, inserisci_nuovo_paziente
+from query import *
 from pylatex import Document, Section, Subsection, Command
 from pylatex.utils import NoEscape
 from langchain.chains import LLMChain  # Import the LLMChain class
@@ -73,6 +73,9 @@ def get_patient_details(question):
     location = response_dict.get("Location", "non specificato")
     vital_signs = response_dict.get("Vital Signs", "non specificato")
     symptoms = response_dict.get("Symptoms", "non specificato")
+
+
+
 
     return name, surname, date_of_birth, gender, location, vital_signs, symptoms, codice_fiscale
 
