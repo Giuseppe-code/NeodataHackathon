@@ -1,10 +1,7 @@
-import requests
-import os
 import json
 # chatbot.py
 # Import necessary modules
 from langchain_core.prompts import ChatPromptTemplate
-#da togliere questa riga
 from langchain_community.llms import Ollama
 import streamlit as st
 import sqlite3
@@ -14,22 +11,22 @@ from pylatex.utils import NoEscape
 from langchain.chains import LLMChain  # Import the LLMChain class
 #  Importazioni necessarie per la RAG
 from langchain_community.retrievers import WikipediaRetriever
-#retriever = WikipediaRetriever()
-#docs = retriever.invoke("codice fiscale")
-#print(docs)
+retriever = WikipediaRetriever()
+docs = retriever.invoke("codice fiscale")
+print(docs)
 # Aggiunta delle conoscenze di triage:
 from langchain_community.document_loaders import WebBaseLoader
 
-#loader = WebBaseLoader("https://docs.smith.langchain.com/overview")
-#data = loader.load()
-#from langchain_text_splitters import RecursiveCharacterTextSplitter
+loader = WebBaseLoader("https://docs.smith.langchain.com/overview")
+data = loader.load()
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-#text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=0)
-#all_splits = text_splitter.split_documents(data)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=0)
+all_splits = text_splitter.split_documents(data)
 # creazione degli embeddings
 from langchain_chroma import Chroma
 from langchain.embeddings import SentenceTransformerEmbeddings
-#embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
 #vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbeddings())
 
@@ -50,7 +47,7 @@ prompt = ChatPromptTemplate.from_messages(
 detail_prompt = ChatPromptTemplate.from_messages(
     [
         ("system",
-         "using the json format from ommitting the json in the response, Extract the following details from the text: Codice_fiscale, Name, Surname, Date of Birth, Gender, Location, Vital Signs, Symptoms. Provide the details in json. dont tell other things other than the json file"),
+         "Extract the following details from the text: Codice_fiscale, Name, Surname, Date of Birth, Gender, Location, Vital Signs, Symptoms. Provide the details in json. dont tell other things other than the json file"),
         ("user", "Patient condition details: {question}")
     ]
 )
@@ -64,57 +61,29 @@ st.title('Langchain Chatbot With LLAMA2 model')  # Set the title of the Streamli
 input_text = st.text_input("Describe the patient's condition:")  # Create a text input field in the Streamlit app
 
 # Initialize the Ollama model with temperature set to 0
-#llm = Ollama(model="llama3", temperature=0)
-os.environ['OPENAI_API_KEY'] = 'sk-proj-eGrGL5sBrvtXjyMm7oApT3BlbkFJsN0aau3Ivx3puXkLqSXp'
-from langchain_openai import ChatOpenAI
-
-llm = ChatOpenAI(model="gpt-4o")
-
-#aggiunta di un output parser
-from langchain_core.output_parsers import StrOutputParser
-output_parser = StrOutputParser()
-
-
+llm = Ollama(model="llama3", temperature=0)
 
 # Create chains that combine the prompt and the Ollama model
-categorize_chain = prompt | llm | output_parser
-detail_chain = detail_prompt | llm | output_parser
-
-
-
-
-
-
-
-
-
-
-
+categorize_chain = prompt | llm
+detail_chain = detail_prompt | llm
 
 # Invoke the chain with the input text and display the output
 if input_text:
     # Categorize the severity
     response = categorize_chain.invoke({"question": input_text})
-    #response = llm.invoke(input_text)
-    #severity = response.split()[1]
-    st.write(f"il sistema IGEA classifica il paziente con il codice: {response}")
+
+    severity = response.split()[0]
+    st.write(f"il sistema IGEA classifica il paziente con il codice: {severity}")
 
 
 # Function to get patient details from the model response
 def get_patient_details(question):
     # Create the LangChain chain
 
-    #chain = LLMChain(llm=llm, prompt=detail_prompt)
-    detail_chain = detail_prompt | llm | output_parser
+    chain = LLMChain(llm=llm, prompt=detail_prompt)
 
     # Get the response from the model
-    #response = chain.run({"question": question})
-    response = detail_chain.invoke({"question": input_text})
-    print()
-    print(response)
-   # response.lstrip(5)
-    print(type(response))
-    print()
+    response = chain.run({"question": question})
 
     # Convert the response to a dictionary
     response_dict = json.loads(response)
@@ -140,5 +109,3 @@ name, surname, date_of_birth, gender, location, vital_signs, symptoms, codice_fi
 
 print(
     f"Name: {name}, Surname: {surname},Codice fiscale: {codice_fiscale}, Date of Birth: {date_of_birth}, Gender: {gender}, Location: {location}, Vital Signs: {vital_signs}, Symptoms: {symptoms}")
-
-
