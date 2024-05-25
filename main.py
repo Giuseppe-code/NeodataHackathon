@@ -3,6 +3,7 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.llms import Ollama
 import streamlit as st
+import sqlite3
 from pylatex import Document, Section, Subsection, Command
 from pylatex.utils import NoEscape
 
@@ -21,6 +22,11 @@ detail_prompt = ChatPromptTemplate.from_messages(
         ("user", "Patient condition details: {question}")
     ]
 )
+
+# Define database variables
+conn = sqlite3.connect('mydatabase.db')
+cursor = conn.cursor()
+
 
 # Set up the Streamlit framework
 st.title('Langchain Chatbot With LLAMA2 model')  # Set the title of the Streamlit app
@@ -55,6 +61,10 @@ def generate_latex_report(details, severity):
         doc.append(f"Vital Signs: {details.get('Vital Signs', 'N/A')}\n")
         doc.append(f"Symptoms: {details.get('Symptoms', 'N/A')}\n")
         doc.append(f"Severity: {severity}\n")
+
+    # Load data into db tables (aspetto valerio)
+
+
     
     # Save the document
     doc.generate_pdf('patient_report', clean_tex=False)
