@@ -13,7 +13,8 @@ from langchain.chains import LLMChain  # Import the LLMChain class
 # Define a prompt template for the chatbot
 prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", "You are a helpful assistant. Based on the patient's condition described, respond with either 'verde', 'giallo', or 'rosso' to categorize the severity of their condition."),
+        ("system",
+         "You are a helpful assistant. Based on the patient's condition described, respond with either 'verde', 'giallo', or 'rosso' to categorize the severity of their condition."),
         ("user", "Patient condition details: {question}")
     ]
 )
@@ -21,7 +22,8 @@ prompt = ChatPromptTemplate.from_messages(
 # Define a prompt template for extracting patient details
 detail_prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", "Extract the following details from the text: Name, Surname, Date of Birth, Gender, Location, Vital Signs, Symptoms. Provide the details in json. dont tell other things other than the json file"),
+        ("system",
+         "Extract the following details from the text: Name, Surname, Date of Birth, Gender, Location, Vital Signs, Symptoms. Provide the details in json. dont tell other things other than the json file"),
         ("user", "Patient condition details: {question}")
     ]
 )
@@ -29,7 +31,6 @@ detail_prompt = ChatPromptTemplate.from_messages(
 # Define database variables
 conn = sqlite3.connect('database.db')
 cursor = conn.cursor()
-
 
 # Set up the Streamlit framework
 st.title('Langchain Chatbot With LLAMA2 model')  # Set the title of the Streamlit app
@@ -42,8 +43,6 @@ llm = Ollama(model="llama3", temperature=0)
 categorize_chain = prompt | llm
 detail_chain = detail_prompt | llm
 
-
-
 # Invoke the chain with the input text and display the output
 if input_text:
     # Categorize the severity
@@ -51,19 +50,20 @@ if input_text:
 
     severity = response.split()[0]
     st.write(f"The patient's condition is categorized as: {severity}")
-    
+
+
 # Function to get patient details from the model response
 def get_patient_details(question):
     # Create the LangChain chain
 
     chain = LLMChain(llm=llm, prompt=detail_prompt)
-    
+
     # Get the response from the model
     response = chain.run({"question": question})
-    
+
     # Convert the response to a dictionary
     response_dict = json.loads(response)
-    
+
     # Extract the parameters
     name = response_dict.get("Name", "non specificato")
     surname = response_dict.get("Surname", "non specificato")
@@ -72,12 +72,14 @@ def get_patient_details(question):
     location = response_dict.get("Location", "non specificato")
     vital_signs = response_dict.get("Vital Signs", "non specificato")
     symptoms = response_dict.get("Symptoms", "non specificato")
-    
+
     return name, surname, date_of_birth, gender, location, vital_signs, symptoms
+
 
 # Example usage
 patient_question = "Patient condition details: John Doe, born on 01/01/1980, male, located in Room 101, has a fever of 39°C and complains of chest pain."
 name, surname, date_of_birth, gender, location, vital_signs, symptoms = get_patient_details(input_text)
 name, surname, date_of_birth, gender, location, vital_signs, symptoms = get_patient_details(input_text)
 
-print(f"Name: {name}, Surname: {surname}, Date of Birth: {date_of_birth}, Gender: {gender}, Location: {location}, Vital Signs: {vital_signs}, Symptoms: {symptoms}")
+print(
+    f"Name: {name}, Surname: {surname}, Date of Birth: {date_of_birth}, Gender: {gender}, Location: {location}, Vital Signs: {vital_signs}, Symptoms: {symptoms}")
