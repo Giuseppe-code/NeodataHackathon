@@ -4,6 +4,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.llms import Ollama
 import streamlit as st
 import sqlite3
+from query import creare_connessione_database, verifica_codice_fiscale, recupera_dati_paziente, inserisci_nuovo_paziente
 from pylatex import Document, Section, Subsection, Command
 from pylatex.utils import NoEscape
 
@@ -24,7 +25,7 @@ detail_prompt = ChatPromptTemplate.from_messages(
 )
 
 # Define database variables
-conn = sqlite3.connect('mydatabase.db')
+conn = sqlite3.connect('database.db')
 cursor = conn.cursor()
 
 
@@ -62,12 +63,9 @@ def generate_latex_report(details, severity):
         doc.append(f"Symptoms: {details.get('Symptoms', 'N/A')}\n")
         doc.append(f"Severity: {severity}\n")
 
-    # Load data into db tables (aspetto valerio)
-
-
-    
     # Save the document
     doc.generate_pdf('patient_report', clean_tex=False)
+
 
 # Reward system variables
 reward = 0
