@@ -1,3 +1,5 @@
+#
+
 import requests
 import os
 import json
@@ -101,6 +103,16 @@ detail_prompt = ChatPromptTemplate.from_messages(
         ("user", "Patient condition details: {question}")
     ]
 )
+#pronpth del codice fiscale
+codicefiscale_prompth = ChatPromptTemplate.from_messages(
+    [
+        ("system",
+         "in base alla descrizione del paziente rispondi solo con una parola estrapolando il codice fiscale dalla descrizione fornita"),
+        ("user", "Patient codice fiscale: {question}")
+    ]
+)
+
+
 
 # Define database variables
 conn = sqlite3.connect('database.db')
@@ -125,6 +137,9 @@ output_parser = StrOutputParser()
 # Create chains that combine the prompt and the Ollama model
 categorize_chain = prompt | llm | output_parser
 detail_chain = detail_prompt | llm | output_parser
+codicefiscale_chain = codicefiscale_prompth | llm | output_parser
+
+
 
 # creazione dell'agent
 from langchain.agents import create_tool_calling_agent
@@ -187,11 +202,23 @@ def get_patient_details(question):
 
 
 
-    return name, surname, date_of_birth, gender, location, vital_signs, symptoms, codice_fiscale
+    return name, surname, date_of_birth, gender, location, vital_signs, symptoms
 
 
 # Example usage
-name, surname, date_of_birth, gender, location, vital_signs, symptoms, codice_fiscale = get_patient_details(input_text)
+name, surname, date_of_birth, gender, location, vital_signs, symptoms = get_patient_details(input_text)
+# preleva il codeice fiscale
+
+def get_patient_CodiceFiscale(question):
+    prompt = codicefiscale_prompth
+    codicefiscale_chain = codicefiscale_prompth | llm | output_parser
+
+
+    response = codicefiscale_chain.invoke({"question": input_text})
+    codice_fiscale = response
+    return codice_fiscale
+codice_fiscale = get_patient_CodiceFiscale(input_text)
+st.write(codice_fiscale)
 
 print(
     f"Name: {name}, Surname: {surname},Codice fiscale: {codice_fiscale}, Date of Birth: {date_of_birth}, Gender: {gender}, Location: {location}, Vital Signs: {vital_signs}, Symptoms: {symptoms}")
