@@ -103,6 +103,20 @@ detail_prompt = ChatPromptTemplate.from_messages(
         ("user", "Patient condition details: {question}")
     ]
 )
+# triage report
+triagereport_prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system",
+         "you are a great triage operator, summarize in markdown the medichal condition of the patient "),
+        ("user", "Patient condition details: {question}")
+    ]
+)
+
+
+
+
+
+
 #pronpth del codice fiscale
 codicefiscale_prompth = ChatPromptTemplate.from_messages(
     [
@@ -138,7 +152,7 @@ output_parser = StrOutputParser()
 categorize_chain = prompt | llm | output_parser
 detail_chain = detail_prompt | llm | output_parser
 codicefiscale_chain = codicefiscale_prompth | llm | output_parser
-
+triagereport_chain = triagereport_prompt | llm | output_parser
 
 
 # creazione dell'agent
@@ -158,70 +172,74 @@ agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
 
 # Invoke the chain with the input text and display the output
-if input_text:
+def GetReportPatient(input_text):
+    if input_text:
     # Categorize the severity
-    response = categorize_chain.invoke({"question": input_text})
+        response = categorize_chain.invoke({"question": input_text})
     #response = llm.invoke(input_text)
     #severity = response.split()[1]
-    st.write(f"il sistema IGEA classifica il paziente con il codice: {response}")
+        #st.write(f"il sistema IGEA classifica il paziente con il codice: {response}")
+        return response
 
 
 # Function to get patient details from the model response
 def get_patient_details(question):
+    if input_text:
     # Create the LangChain chain
 
     #chain = LLMChain(llm=llm, prompt=detail_prompt)
-    detail_chain = detail_prompt | llm | output_parser
+        detail_chain = detail_prompt | llm | output_parser
 
     # Get the response from the model
     #response = chain.run({"question": question})
-    response = detail_chain.invoke({"question": input_text})
+        response = detail_chain.invoke({"question": input_text})
     
 # Rimozione degli ultimi 3 caratteri
     #response = response[:5]
 
-    print()
-    print(response)
+        print()
+        print(response)
    # response.lstrip(5)
-    print(type(response))
-    print()
+        print(type(response))
+        print()
 
     # Convert the response to a dictionary
-    response_dict = json.loads(response)
+        response_dict = json.loads(response)
 
     # Extract the parameters
-    name = response_dict.get("Name", "non specificato")
-    codice_fiscale = response_dict.get("Codice fiscale","Non specificato")
-    surname = response_dict.get("Surname", "non specificato")
-    date_of_birth = response_dict.get("Date of Birth", "non specificato")
-    gender = response_dict.get("Gender", "non specificato")
-    location = response_dict.get("Location", "non specificato")
-    vital_signs = response_dict.get("Vital Signs", "non specificato")
-    symptoms = response_dict.get("Symptoms", "non specificato")
+        name = response_dict.get("Name", "non specificato")
+        codice_fiscale = response_dict.get("Codice fiscale","Non specificato")
+        surname = response_dict.get("Surname", "non specificato")
+        date_of_birth = response_dict.get("Date of Birth", "non specificato")
+        gender = response_dict.get("Gender", "non specificato")
+        location = response_dict.get("Location", "non specificato")
+        vital_signs = response_dict.get("Vital Signs", "non specificato")
+        symptoms = response_dict.get("Symptoms", "non specificato")
 
 
 
 
-    return name, surname, date_of_birth, gender, location, vital_signs, symptoms
+        return name, surname, date_of_birth, gender, location, vital_signs, symptoms
 
 
 # Example usage
-name, surname, date_of_birth, gender, location, vital_signs, symptoms = get_patient_details(input_text)
+#name, surname, date_of_birth, gender, location, vital_signs, symptoms = get_patient_details(input_text)
 # preleva il codeice fiscale
 
 def get_patient_CodiceFiscale(question):
-    prompt = codicefiscale_prompth
-    codicefiscale_chain = codicefiscale_prompth | llm | output_parser
+    if input_text:
+        prompt = codicefiscale_prompth
+        codicefiscale_chain = codicefiscale_prompth | llm | output_parser
 
 
-    response = codicefiscale_chain.invoke({"question": input_text})
-    codice_fiscale = response
-    return codice_fiscale
+        response = codicefiscale_chain.invoke({"question": input_text})
+        codice_fiscale = response
+        return codice_fiscale
 codice_fiscale = get_patient_CodiceFiscale(input_text)
 st.write(codice_fiscale)
 
-print(
-    f"Name: {name}, Surname: {surname},Codice fiscale: {codice_fiscale}, Date of Birth: {date_of_birth}, Gender: {gender}, Location: {location}, Vital Signs: {vital_signs}, Symptoms: {symptoms}")
+#print(
+#    f"Name: {name}, Surname: {surname},Codice fiscale: {codice_fiscale}, Date of Birth: {date_of_birth}, Gender: {gender}, Location: {location}, Vital Signs: {vital_signs}, Symptoms: {symptoms}")
 
 
 
@@ -242,3 +260,41 @@ def generate_latex_report(details, severity):
     # Save the document
     doc.generate_pdf('patient_report', clean_tex=False)
 
+
+def insert_patient_and_card(codice_fiscale, name, surname, birthday, residence, gender, city_of_birth, symptoms,severity, day_of_registration):
+    # Controllo se il paziente esiste
+    cursor.execute('SELECT * FROM Patient WHERE codice_fiscale = ?', (codice_fiscale,))
+    patient = cursor.fetchone()
+
+    if patient is None:
+        # Inserisco il paziente
+        cursor.execute('''
+        INSERT INTO Patient (codice_fiscale, name, surname, birthday,residence, gender,city_of_birth)
+        VALUES (?, ?, ?, ?,?, ?, ?)
+        ''', (codice_fiscale, name, surname, birthday,residence, gender, city_of_birth))
+        conn.commit()
+        print(f'Inserted Patient with codice_fiscale: {codice_fiscale}')
+    else:
+        #non lo inserisco
+        print(f'Patient with codice_fiscale: {codice_fiscale} already exists.')
+
+    # Inserisco la Patient_card (insert che va fatto sempre)
+    cursor.execute('''
+    INSERT INTO Patient_card (codice_fiscale, day_of_registration, symptoms, severity )
+    VALUES (?, ?, ?, ?)
+    ''', (codice_fiscale, day_of_registration, symptoms,severity))
+    conn.commit()
+    print(f'Inserted Patient_card for codice_fiscale: {codice_fiscale}')
+
+
+
+
+
+def getTriageReport(input_text):
+    if input_text:
+        prompt = triagereport_prompt
+        triagereport_chain = prompt | llm | output_parser
+
+
+        response = triagereport_chain.invoke({"question": input_text})
+        return response
