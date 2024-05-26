@@ -1,5 +1,7 @@
 import streamlit as st
 
+messages = []
+
 textIntroduction = "Hi Marco, you are the Specialized Doctor. \n I will send you the information. We have this info about the patient:"
 
 with open("patient_report.pdf", "rb") as pdf_file:
@@ -16,13 +18,13 @@ st.download_button(label="ReportPatient",
 varText = st.chat_input("assign the patient at the doctor ...")
 # Initialize chat history
 with st.container(height=280):
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-        st.session_state.messages.append(
+    if messages == []:
+        messages = []
+        messages.append(
             {"role": "assistant", "content": textIntroduction})
 
     # Display chat messages from history on app rerun
-    for message in st.session_state.messages:
+    for message in messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
@@ -32,11 +34,11 @@ with st.container(height=280):
         # Display user message in chat message container
         st.chat_message("user").markdown(prompt)
         # Add user message to chat history
-        st.session_state.messages.append({"role": "user", "content": prompt})
+        messages.append({"role": "user", "content": prompt})
 
         response = f"Echo: {prompt}"
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
             st.markdown(response)
         # Add assistant response to chat history
-        st.session_state.messages.append({"role": "assistant", "content": response})
+        messages.append({"role": "assistant", "content": response})
