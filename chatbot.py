@@ -39,10 +39,7 @@ st.set_page_config(
 
 loader = WebBaseLoader(
     [
-        "https://web.dmi.unict.it/corsi/l-31/insegnamenti?seuid=CD1ABF9F-5308-450E-813E-60B84F9EDAA5",
-        "https://web.dmi.unict.it/corsi/l-31/insegnamenti?seuid=6E03B0E2-5E93-43C5-BBFB-E4D6446DB180",
-        "https://web.dmi.unict.it/corsi/l-31/insegnamenti?seuid=81E1DC57-5DC2-46ED-84AF-3C8BB46F3F49",
-        "https://web.dmi.unict.it/corsi/l-31/contatti",
+        "https://www.nurse24.it/specializzazioni/emergenza-urgenza/che-cos-e-il-triage-infermieristico.html",
     ]
 )
 
@@ -115,7 +112,7 @@ detail_prompt = ChatPromptTemplate.from_messages(
 triagereport_prompt = ChatPromptTemplate.from_messages(
     [
         ("system",
-         "you are a great triage operator, summarize in markdown the medichal condition of the patient "),
+         "you are a great triage operator, summarize in markdown the medichal condition of the patient in the following schema Personal informations , brief summary of the motivation that caused him to go the hospital, synthoms and a brief possible threatment. dont add more than askd "),
         ("user", "Patient condition details: {question}")
     ]
 )
@@ -170,7 +167,7 @@ output_parser = StrOutputParser()
 
 
 
-# Create chains that combine the prompt and the Ollama model
+# Create chains that combine the prompt and the gpt4oa model
 categorize_chain = prompt | llm | output_parser
 detail_chain = detail_prompt | llm | output_parser
 codicefiscale_chain = codicefiscale_prompth | llm | output_parser
