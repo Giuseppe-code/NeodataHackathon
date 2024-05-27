@@ -16,7 +16,7 @@ from pylatex.utils import NoEscape
 from langchain.chains import LLMChain  # Import the LLMChain class
 
 # CHIAVI API
-os.environ['OPENAI_API_KEY'] = 'sk-proj-eGrGL5sBrvtXjyMm7oApT3BlbkFJsN0aau3Ivx3puXkLqSXp'
+os.environ['OPENAI_API_KEY'] = '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'
 os.environ['tavily_api_key'] = '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'
 os.environ['TAVILY_API_KEY'] = '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'
 #  Importazioni necessarie per la RAG
@@ -30,6 +30,12 @@ from langchain_community.document_loaders import WebBaseLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.tools.tavily_search import TavilySearchResults
 
+st.set_page_config(
+    page_title="Igea",
+    page_icon="🏥",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
 loader = WebBaseLoader(
     [
@@ -150,9 +156,8 @@ conn = sqlite3.connect('database.db')
 cursor = conn.cursor()
 
 # Set up the Streamlit framework
-st.title('Langchain Chatbot With LLAMA2 model')  # Set the title of the Streamlit app
-input_text = st.text_input("Describe the patient's condition:")  # Create a text input field in the Streamlit app
-
+st.title("Per caricare il bot passa prima da triage, specialized, general, dopo prova l' app da triage👈")  # Set the title of the Streamlit app
+input_text = st.text_input(" ")
 # Initialize the Ollama model with temperature set to 0
 #llm = Ollama(model="llama3", temperature=0)
 from langchain_openai import ChatOpenAI
