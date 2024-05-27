@@ -33,26 +33,12 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 
 loader = WebBaseLoader(
     [
-        "https://arcs.sanita.fvg.it/media/uploads/files/manuale_di_triage_per_ladulto_28VbM8T_0LPFt8e.pdf
-",
-        "https://www.salute.gov.it/imgs/C_17_pubblicazioni_3145_allegato.pdf
-",
-        "https://www.nurse24.it/specializzazioni/emergenza-urgenza/che-cos-e-il-triage-infermieristico.html",
+        "https://web.dmi.unict.it/corsi/l-31/insegnamenti?seuid=CD1ABF9F-5308-450E-813E-60B84F9EDAA5",
+        "https://web.dmi.unict.it/corsi/l-31/insegnamenti?seuid=6E03B0E2-5E93-43C5-BBFB-E4D6446DB180",
+        "https://web.dmi.unict.it/corsi/l-31/insegnamenti?seuid=81E1DC57-5DC2-46ED-84AF-3C8BB46F3F49",
+        "https://web.dmi.unict.it/corsi/l-31/contatti",
     ]
 )
-￼
-
-
-
-￼
-
-
-
-
-
-
-
-
 
 
 docs = loader.load()
