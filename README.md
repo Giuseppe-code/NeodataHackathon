@@ -1,4 +1,4 @@
-# Langchain Chatbot With LLAMA3 Model
+## Langchain Chatbot With GPT4O Model
 
 ## Descrizione del Progetto
 
@@ -15,7 +15,6 @@ Questo progetto è stato sviluppato per l'hackathon di Neodata. Si tratta di un 
 - **Categorizzazione della Gravità**: Il chatbot risponde con "verde", "giallo" o "rosso" per indicare la gravità della condizione del paziente.
 - **Estrazione dei Dettagli del Paziente**: Il chatbot è in grado di estrarre dettagli strutturati dal testo fornito, come Nome, Cognome, Data di Nascita, Genere, Localizzazione, Segni Vitali e Sintomi.
 - **Generazione di Report LaTeX**: Il sistema genera un report in formato LaTeX con i dettagli del paziente e la categorizzazione della gravità.
-- **Sistema di Ricompensa**: Implementa un sistema di ricompensa per valutare la correttezza della categorizzazione della gravità.
 
 ## Utilizzo
 

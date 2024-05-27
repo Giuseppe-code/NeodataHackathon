@@ -314,7 +314,7 @@ def getTriageReport(input_text):
 
 
         response = triagereport_chain.invoke({"question": input_text})
-        name, surname, date_of_birth, gender, location, vital_signs, symptoms = get_patient_details(input_text)
+        #name, surname, date_of_birth, gender, location, vital_signs, symptoms = get_patient_details(input_text)
 
         #insert_patient_and_card(codice_fiscale,severity)
 
