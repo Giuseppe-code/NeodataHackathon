@@ -13,7 +13,7 @@ import sqlite3
 from query import *
 from pylatex import Document, Section, Subsection, Command
 # CHIAVI API
-os.environ['OPENAI_API_KEY'] = 'sk-proj-zVtyZx2NeMbiOxlQP5IET3BlbkFJY4zBF1Fspjkf31vQG4oS'
+os.environ['OPENAI_API_KEY'] = 'Cambiare in api allegata'
 os.environ['tavily_api_key'] = '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'
 os.environ['TAVILY_API_KEY'] = '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'
 #  Importazioni necessarie per la RAG
