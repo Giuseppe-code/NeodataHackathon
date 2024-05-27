@@ -28,6 +28,8 @@ with st.container(height=340):
         st.session_state.messages_3.append({"role": "🥼", "content": prompt})
 
         response = getTriageReport(prompt)
+        severity = GetReportPatient(prompt)
+        st.write(severity)
         print(response)
         # Display assistant response in chat message container
         with st.chat_message("🤖"):

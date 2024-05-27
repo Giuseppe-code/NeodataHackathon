@@ -28,7 +28,7 @@ with st.container(height=340):
         # Add user message to chat history
         st.session_state.messages_1.append({"role": "🥼", "content": prompt})
 
-        response = f"Echo: {prompt}"
+        response = getSpecializedReport(prompt)
         # Display assistant response in chat message container
         with st.chat_message("🤖"):
             st.markdown(response)

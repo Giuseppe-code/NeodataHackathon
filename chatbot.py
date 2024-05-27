@@ -33,12 +33,28 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 
 loader = WebBaseLoader(
     [
-        "https://web.dmi.unict.it/corsi/l-31/insegnamenti?seuid=CD1ABF9F-5308-450E-813E-60B84F9EDAA5",
-        "https://web.dmi.unict.it/corsi/l-31/insegnamenti?seuid=6E03B0E2-5E93-43C5-BBFB-E4D6446DB180",
-        "https://web.dmi.unict.it/corsi/l-31/insegnamenti?seuid=81E1DC57-5DC2-46ED-84AF-3C8BB46F3F49",
-        "https://web.dmi.unict.it/corsi/l-31/contatti",
+        "https://arcs.sanita.fvg.it/media/uploads/files/manuale_di_triage_per_ladulto_28VbM8T_0LPFt8e.pdf
+",
+        "https://www.salute.gov.it/imgs/C_17_pubblicazioni_3145_allegato.pdf
+",
+        "https://www.nurse24.it/specializzazioni/emergenza-urgenza/che-cos-e-il-triage-infermieristico.html",
     ]
 )
+￼
+
+
+
+￼
+
+
+
+
+
+
+
+
+
+
 docs = loader.load()
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 splits = text_splitter.split_documents(docs)
@@ -65,8 +81,8 @@ retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={"k": 6})
 # Create tools
 retriever_tool = create_retriever_tool(
     retriever,
-    "Uni_helper",
-    "Help students and Search for information about University of Catania courses. For any questions about uni courses and their careers, you must use this tool for helping students!",
+    "triage_classifier",
+    "for classifiing the patient you must follow this informations and instructions criterias!",
 )
 # Search tool
 
@@ -112,8 +128,23 @@ triagereport_prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-
-
+# specialized report
+specializedreport_prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system",
+         " you are an automatic notifier, based on the additional info provided by the specialist, list in markdown all of the hospital wards to notify and the exam to take "),
+        ("user", "Specialist response: {question}")
+    ]
+)
+        
+# response del medico generale
+generalreport_prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system",
+         "Based on the imput provided if the doctor declares the dimission write in markdown:the patient is dimitted"),
+        ("user", "General doctor response: {question}")
+    ]
+)
 
 
 
@@ -236,7 +267,7 @@ def get_patient_CodiceFiscale(question):
         codice_fiscale = response
         return codice_fiscale
 codice_fiscale = get_patient_CodiceFiscale(input_text)
-st.write(codice_fiscale)
+#st.write(codice_fiscale)
 
 #print(
 #    f"Name: {name}, Surname: {surname},Codice fiscale: {codice_fiscale}, Date of Birth: {date_of_birth}, Gender: {gender}, Location: {location}, Vital Signs: {vital_signs}, Symptoms: {symptoms}")
@@ -297,4 +328,28 @@ def getTriageReport(input_text):
 
 
         response = triagereport_chain.invoke({"question": input_text})
+        name, surname, date_of_birth, gender, location, vital_signs, symptoms = get_patient_details(input_text)
+
+        #insert_patient_and_card(codice_fiscale,severity)
+
+        return response
+
+
+
+def getSpecializedReport(input_text):
+    if input_text:
+        specializedreport_chain = specializedreport_prompt | llm | output_parser
+
+
+        response = specializedreport_chain.invoke({"question": input_text})
+        return response
+
+
+
+def getGeneralReport(input_text):
+    if input_text:
+        generalreport_chain = generalreport_prompt | llm | output_parser
+
+
+        response = generalreport_chain.invoke({"question": input_text})
         return response
