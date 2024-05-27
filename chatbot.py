@@ -12,9 +12,6 @@ import streamlit as st
 import sqlite3
 from query import *
 from pylatex import Document, Section, Subsection, Command
-from pylatex.utils import NoEscape
-from langchain.chains import LLMChain  # Import the LLMChain class
-
 # CHIAVI API
 os.environ['OPENAI_API_KEY'] = 'sk-proj-zVtyZx2NeMbiOxlQP5IET3BlbkFJY4zBF1Fspjkf31vQG4oS'
 os.environ['tavily_api_key'] = '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'
