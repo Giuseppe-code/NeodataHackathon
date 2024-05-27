@@ -16,7 +16,7 @@ from pylatex.utils import NoEscape
 from langchain.chains import LLMChain  # Import the LLMChain class
 
 # CHIAVI API
-os.environ['OPENAI_API_KEY'] = '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'
+os.environ['OPENAI_API_KEY'] = 'sk-proj-zVtyZx2NeMbiOxlQP5IET3BlbkFJY4zBF1Fspjkf31vQG4oS'
 os.environ['tavily_api_key'] = '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'
 os.environ['TAVILY_API_KEY'] = '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'
 #  Importazioni necessarie per la RAG
