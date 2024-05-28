@@ -1,14 +1,18 @@
-## Langchain Chatbot With GPT4O Model
+## Langchain Chatbot With GPT-4o Model
+## 🥇Winner of NEODATA HACKATHON CATANIA 🏆 <br>
+Solve text-data management problems with RAG, chatbots, and more<br>
+Check the hackathon: <a href="https://neodata-hackatania.devpost.com/" >Neodata Hackathon Catania</a> <br>
+Check the video presentation: <a href="https://youtu.be/vfuk9ie6V0k" >IGEA, Progetto RAG Neodata Hackathon Catania</a>
 
 ## Descrizione del Progetto
 
-Questo progetto è stato sviluppato per l'hackathon di Neodata. Si tratta di un chatbot avanzato che utilizza il modello LLAMA3- e il framework Langchain per analizzare la condizione dei pazienti e categorizzare la gravità della loro condizione in base ai dettagli forniti.
+Questo progetto è stato sviluppato per l'hackathon di Neodata. Si tratta di un chatbot avanzato che utilizza il modello GPT-4o e il framework Langchain per analizzare la condizione dei pazienti e categorizzare la gravità della loro condizione in base ai dettagli forniti.
 
 ## Componenti del Team
 
-- Giuseppe Vinci
-- Giuseppe Stancanelli
-- Valerio Messina
+- Giuseppe Vinci @GiuseppeVinci04
+- Giuseppe Stancanelli @Giuseppe-code
+- Valerio Messina @ValerioMessina
 
 ## Funzionalità Principali
 
